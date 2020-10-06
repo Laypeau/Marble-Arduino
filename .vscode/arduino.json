@@ -1,0 +1,6 @@
+{
+    "programmer": "AVRISP mkII",
+    "board": "arduino:avr:uno",
+    "port": "COM6",
+    "sketch": "SparkFun_HX711_Calibration\\SparkFun_HX711_Calibration.ino"
+}
