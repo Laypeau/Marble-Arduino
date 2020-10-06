@@ -1,16 +1,21 @@
 #include <Stepper.h>
 #include <HX711.h>
 
+// Each region contains code relating to a single sensor/device
+// Remember to adjust redThreshold for the room lighting
+
 #pragma region [Colour sensor]
 	enum Colour{Red, Green, Blue, Off};
 	const int pinLedRed = 10;
 	const int pinLedGreen = 11;
 	const int pinLedBlue = 12;
-	const int pinLedLdrIn = A5; //analog pin
+	const int pinLedLdrIn = A5; //Make sure it's an analog pin
 
 	int ambientRed = 0;
 	int ambientGreen = 0;
 	int ambientBlue = 0;
+
+	int redThreshold = 200; //Adjust red threshold for accordingly
 
 	const int pinLedStepper1 = A0;
 	const int pinLedStepper2 = A1;
@@ -80,7 +85,7 @@ void loop()
 	int r = ReadAverage(Colour::Red, 10) - ambientRed;
 	int g = ReadAverage(Colour::Green, 10) - ambientGreen;
 	int b = ReadAverage(Colour::Blue, 10) - ambientBlue;
-	Serial.print("Reading {R: ");
+	Serial.print("Colour sensor reading: {R: ");
 	Serial.print(r);
 	Serial.print(", G: ");
 	Serial.print(g);
@@ -88,7 +93,7 @@ void loop()
 	Serial.print(b);
 	Serial.println("}");
 
-	if (r > 200)
+	if (r > redThreshold) //Adjust red threshold for accordingly
 	{
 		stepperLed.step(2048);
 	}
@@ -102,14 +107,17 @@ void loop()
 	switch (ReadMarble())
 	{
 	case Marble::Plastic:
+		Serial.println("Weight sensor reading {Plastic}");
 		stepperWeight.step(683);
 		break;
 
 	case Marble::Metal:
+		Serial.println("Weight sensor reading {Metal}");
 		stepperWeight.step(-683);
 		break;
 	
 	default:
+		Serial.println("Weight sensor reading {Nothing :(}");
 		break;
 	}
 	#pragma endregion
